@@ -9,5 +9,9 @@ export default class Element {
   r = 0;
   /* 锁定 */
   lock = false;
+  width = 0;
+  height = 0;
+  tag = "";
+  category = "";
   constructor() {}
 }

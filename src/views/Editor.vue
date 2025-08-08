@@ -30,6 +30,13 @@
       </div>
       <div class="layer"></div>
     </div>
+    <div class="editor-right">
+      <attr-config
+        v-if="selected != -1"
+        :el="elements[selected]"
+        @handler="handlerControl"
+      ></attr-config>
+    </div>
     <div
       :class="[
         'editor-rect',
@@ -47,18 +54,16 @@
         <div class="ref-x-line"></div>
         <div class="ref-y-line"></div>
         <div
-          :class="['el', item.tag, item.id == selected && 'selected']"
+          :class="['el', item.tag, index == selected && 'selected']"
           :style="{
+            width: `${item.width}px`,
+            height: `${item.height}px`,
             left: `${item.x}px`,
             top: `${item.y}px`,
           }"
           :id="item.id"
           :index="index"
-          @click="selectEl(index)"
           @mousedown="elmousedown"
-          @mousemove="elmousemove"
-          @mouseleave="elmouseup"
-          @mouseup="elmouseup"
           v-for="(item, index) in elements"
           :key="index"
         ></div>
@@ -70,8 +75,12 @@
 <script>
 // @ is an alias to /src
 import * as Constructor from "@/schema";
+import AttrConfig from "@/components/AttrConfig.vue";
 
 export default {
+  components: {
+    AttrConfig,
+  },
   data() {
     return {
       rectWidth: 0,
@@ -87,18 +96,14 @@ export default {
       mousedown: false,
       spacedown: false,
       Constructor,
-      elements: [
-        {
-          x: 200,
-          y: 200,
-        },
-      ],
+      elements: [],
       selected: -1,
       elSpread: 5,
       elStartX: 0,
       elStartY: 0,
       elStartPosX: 0,
       elStartPosY: 0,
+      elTimestamp: 0,
       elMoving: false,
       moveArray: [],
       stayArray: [],
@@ -241,13 +246,13 @@ export default {
           ? "DOMMouseScroll"
           : "mousewheel",
         function (e) {
-          const zoomin = (e.detail ? e.detail * 120 : -e.wheelDelta) > 0;
+          const zoomin = (e.detail ? e.detail * 40 : -e.wheelDelta) > 0;
           if (
             (zoomin && self.minZoom < self.scroller.getValues().zoom) ||
             !zoomin
           ) {
             self.scroller.doMouseZoom(
-              e.detail ? e.detail * 120 : -e.wheelDelta,
+              e.detail ? e.detail * 40 : -e.wheelDelta,
               e.timeStamp,
               e.pageX,
               e.pageY
@@ -256,12 +261,6 @@ export default {
         },
         false
       );
-
-      $(document).on("click", function (e) {
-        if (!$(e.target).hasClass("el")) {
-          self.selected = -1;
-        }
-      });
     },
     dragstart(e) {
       e.dataTransfer.setData("text/plain", e.target.getAttribute("name"));
@@ -312,16 +311,19 @@ export default {
       return Math.round(l / this.zoom);
     },
     elmousedown(e) {
+      const el = e.currentTarget;
       if (this.spacedown) {
         return false;
       }
 
+      this.elTimestamp = new Date().getTime();
+
       this.elStartX = e.clientX;
       this.elStartY = e.clientY;
       this.elMoving = true;
-      this.elStartPosX = parseInt(e.currentTarget.style.left);
-      this.elStartPosY = parseInt(e.currentTarget.style.top);
-      $(e.currentTarget).addClass("ghost");
+      this.elStartPosX = parseInt(el.style.left);
+      this.elStartPosY = parseInt(el.style.top);
+      $(el).addClass("ghost");
 
       this.stayArray = [
         { x: 0, y: 0 },
@@ -339,7 +341,8 @@ export default {
         if (
           !$(boxs[i]).hasClass("ghost") &&
           !$(boxs[i]).hasClass("ref-x-line") &&
-          !$(boxs[i]).hasClass("ref-y-line")
+          !$(boxs[i]).hasClass("ref-y-line") &&
+          !$(boxs[i]).hasClass("ref-control")
         ) {
           this.stayArray = this.stayArray.concat([
             {
@@ -365,96 +368,131 @@ export default {
           ]);
         }
       }
-    },
-    elmousemove(e) {
-      if (!this.elMoving) {
-        return false;
-      }
 
-      e.currentTarget.style.left =
-        this.elStartPosX + this.getLen(e.clientX - this.elStartX) + "px";
-      e.currentTarget.style.top =
-        this.elStartPosY + this.getLen(e.clientY - this.elStartY) + "px";
-
-      this.moveArray = [
-        {
-          x: parseInt(e.currentTarget.style.left),
-          y: parseInt(e.currentTarget.style.top),
-        },
-        {
-          x:
-            parseInt(e.currentTarget.style.left) +
-            parseInt($(e.currentTarget).outerWidth() / 2),
-          y:
-            parseInt(e.currentTarget.style.top) +
-            parseInt($(e.currentTarget).outerHeight() / 2),
-        },
-        {
-          x:
-            parseInt(e.currentTarget.style.left) +
-            parseInt($(e.currentTarget).outerWidth()),
-          y:
-            parseInt(e.currentTarget.style.top) +
-            parseInt($(e.currentTarget).outerHeight()),
-        },
-      ];
-
-      const minX = this.getMinX(this.moveArray, this.stayArray);
-      if (minX !== null) {
-        $("#paint .ref-x-line")
-          .css("left", minX.val + "px")
-          .show();
-        if (minX.key == 0) {
-          // 如果是 ‘左上’
-          e.currentTarget.style.left = minX.val + "px";
-        } else if (minX.key == 1) {
-          // 如果是 ‘中心’
-          e.currentTarget.style.left =
-            parseInt(minX.val - $(e.currentTarget).outerWidth() / 2) + "px";
-        } else {
-          // 如果是 ‘右下’
-          e.currentTarget.style.left =
-            parseInt(minX.val - $(e.currentTarget).outerWidth()) + "px";
+      const move = (e) => {
+        if (!this.elMoving) {
+          return false;
         }
-      } else {
-        $("#paint .ref-x-line").hide();
-      }
 
-      const minY = this.getMinY(this.moveArray, this.stayArray);
-      if (minY !== null) {
-        $("#paint .ref-y-line")
-          .css("top", minY.val + "px")
-          .show();
-        if (minY.key == 0) {
-          // 如果是 ‘左上’
-          e.currentTarget.style.top = minY.val + "px";
-        } else if (minY.key == 1) {
-          // 如果是 ‘中心’
-          e.currentTarget.style.top =
-            parseInt(minY.val - $(e.currentTarget).outerHeight() / 2) + "px";
+        el.style.left =
+          this.elStartPosX + this.getLen(e.clientX - this.elStartX) + "px";
+        el.style.top =
+          this.elStartPosY + this.getLen(e.clientY - this.elStartY) + "px";
+
+        this.moveArray = [
+          {
+            x: parseInt(el.style.left),
+            y: parseInt(el.style.top),
+          },
+          {
+            x: parseInt(el.style.left) + parseInt($(el).outerWidth() / 2),
+            y: parseInt(el.style.top) + parseInt($(el).outerHeight() / 2),
+          },
+          {
+            x: parseInt(el.style.left) + parseInt($(el).outerWidth()),
+            y: parseInt(el.style.top) + parseInt($(el).outerHeight()),
+          },
+        ];
+
+        const minX = this.getMinX(this.moveArray, this.stayArray);
+        if (minX !== null) {
+          $("#paint .ref-x-line")
+            .css("left", minX.val + "px")
+            .show();
+          if (minX.key == 0) {
+            // 如果是 ‘左上’
+            el.style.left = minX.val + "px";
+          } else if (minX.key == 1) {
+            // 如果是 ‘中心’
+            el.style.left = parseInt(minX.val - $(el).outerWidth() / 2) + "px";
+          } else {
+            // 如果是 ‘右下’
+            el.style.left = parseInt(minX.val - $(el).outerWidth()) + "px";
+          }
         } else {
-          // 如果是 ‘右下’
-          e.currentTarget.style.top =
-            parseInt(minY.val - $(e.currentTarget).outerHeight()) + "px";
+          $("#paint .ref-x-line").hide();
         }
-      } else {
-        $("#paint .ref-y-line").hide();
-      }
 
-      const index = parseInt($(e.currentTarget).attr("index"));
-      this.$set(this.elements, index, {
-        ...this.elements[index],
-        x: parseInt(e.currentTarget.style.left),
-        y: parseInt(e.currentTarget.style.top),
-      });
-    },
-    elmouseup(e) {
-      this.elMoving = false;
-      $(e.currentTarget).removeClass("ghost");
-      $("#paint .ref-x-line,#paint .ref-y-line").hide();
+        const minY = this.getMinY(this.moveArray, this.stayArray);
+        if (minY !== null) {
+          $("#paint .ref-y-line")
+            .css("top", minY.val + "px")
+            .show();
+          if (minY.key == 0) {
+            // 如果是 ‘左上’
+            el.style.top = minY.val + "px";
+          } else if (minY.key == 1) {
+            // 如果是 ‘中心’
+            el.style.top = parseInt(minY.val - $(el).outerHeight() / 2) + "px";
+          } else {
+            // 如果是 ‘右下’
+            el.style.top = parseInt(minY.val - $(el).outerHeight()) + "px";
+          }
+        } else {
+          $("#paint .ref-y-line").hide();
+        }
+
+        const index = parseInt($(el).attr("index"));
+        this.$set(this.elements, index, {
+          ...this.elements[index],
+          x: parseInt(el.style.left),
+          y: parseInt(el.style.top),
+        });
+      };
+
+      const up = (e) => {
+        if (this.elTimestamp && new Date().getTime() - this.elTimestamp < 300) {
+          this.selectEl(parseInt($(el).attr("index")));
+        }
+        this.elTimestamp = 0;
+        this.elMoving = false;
+        $(el).removeClass("ghost");
+        $("#paint .ref-x-line,#paint .ref-y-line").hide();
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+      };
+
+      document.addEventListener("mousemove", move);
+      document.addEventListener("mouseup", up);
     },
     selectEl(id) {
-      this.selected = id;
+      if (id == this.selected) {
+        this.selected = -1;
+      } else {
+        this.selected = id;
+      }
+    },
+    handlerControl(c) {
+      if (this.selected != -1) {
+        if (c == "up") {
+          if (this.selected < this.elements.length - 1) {
+            const temp = this.elements[this.selected];
+            this.$set(
+              this.elements,
+              this.selected,
+              this.elements[this.selected + 1]
+            );
+            this.$set(this.elements, this.selected + 1, temp);
+            this.selected += 1;
+          }
+        }
+        if (c == "down") {
+          if (this.selected > 0) {
+            const temp = this.elements[this.selected];
+            this.$set(
+              this.elements,
+              this.selected,
+              this.elements[this.selected - 1]
+            );
+            this.$set(this.elements, this.selected - 1, temp);
+            this.selected -= 1;
+          }
+        }
+        if (c == "del") {
+          this.elements.splice(this.selected, 1);
+          this.selected = -1;
+        }
+      }
     },
   },
   mounted() {
