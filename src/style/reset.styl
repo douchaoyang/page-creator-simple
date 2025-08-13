@@ -1,0 +1,97 @@
+a, b, body, button, blockquote, canvas, dd, div, dl, dt, em, fieldset, form, footer, frame, frameset, h1, h2, h3, h4, h5, h6, header, i, iframe, img, input, label, li, main, nav, ol, optgroup, p, pre, section, select, span, strong, table, tr, thead, th, tbody, td, textarea, ul, video {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 14px;
+  font-family: 'PingFang SC', 'Microsoft YaHei', '微软雅黑', Arial, 'Helvetica Neue', Helvetica, 'Hiragino Sans GB', sans-serif;
+  line-height: 1.5;
+  background: #fff;
+  color: #333;
+  position: relative;
+}
+
+em, strong, th, i, b {
+  font-style: normal;
+  font-weight: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  color: inherit;
+}
+
+a:hover, a:active {
+  outline-width: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+ol, ul, li {
+  list-style: none outside none;
+}
+
+input {
+  border: 0;
+  outline: 0;
+
+  &::-webkit-credentials-auto-fill-button, &::-webkit-contacts-auto-fill-button {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+
+  &:focus::-webkit-contacts-auto-fill-button {
+    opacity: 0;
+  }
+}
+
+fieldset, img {
+  border: 0;
+}
+
+:not(.use-default-scrollbar)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+:not(.use-default-scrollbar)::-webkit-scrollbar-thumb {
+  border: 1px solid #fff;
+  box-sizing: content-box;
+  min-height: 20px;
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-transition: background-color 0.4s ease-in-out 0s;
+  transition: background-color 0.4s ease-in-out 0s;
+}
+
+:not(.use-default-scrollbar)::-webkit-scrollbar-thumb:active, :not(.use-default-scrollbar)::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 106, 115, 0.8);
+}
+
+:not(.use-default-scrollbar)::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #fff;
+  background: transparent;
+  opacity: 0;
+}
+
+:not(.use-default-scrollbar)::-webkit-scrollbar-button {
+  display: none;
+}

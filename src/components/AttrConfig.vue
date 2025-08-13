@@ -16,36 +16,36 @@
         </div>
       </div>
       <div class="attr-title">Attribute</div>
-      <div class="attr-item" v-if="'x' in el">
+      <div class="attr-item" v-if="'x' in item">
         <div class="left">
           <p class="label">Left</p>
         </div>
         <div class="right">
-          <el-input v-model="el.x"></el-input>
+          <el-input v-model="item.x"></el-input>
         </div>
       </div>
-      <div class="attr-item" v-if="'y' in el">
+      <div class="attr-item" v-if="'y' in item">
         <div class="left">
           <p class="label">Top</p>
         </div>
         <div class="right">
-          <el-input v-model="el.y"></el-input>
+          <el-input v-model="item.y"></el-input>
         </div>
       </div>
-      <div class="attr-item" v-if="'width' in el">
+      <div class="attr-item" v-if="'width' in item">
         <div class="left">
           <p class="label">Width</p>
         </div>
         <div class="right">
-          <el-input v-model="el.width"></el-input>
+          <el-input v-model="item.width"></el-input>
         </div>
       </div>
-      <div class="attr-item" v-if="'height' in el">
+      <div class="attr-item" v-if="'height' in item">
         <div class="left">
           <p class="label">Height</p>
         </div>
         <div class="right">
-          <el-input v-model="el.height"></el-input>
+          <el-input v-model="item.height"></el-input>
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@
 
 <script>
 export default {
-  props: ["el"],
+  props: ["item"],
   methods: {
     handler(c) {
       this.$emit("handler", c);

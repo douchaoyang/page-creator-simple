@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import { Input, Button } from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import "@/style/editor.styl";
 
 Vue.prototype.$ELEMENT = { size: "mini" };
 
