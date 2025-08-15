@@ -1,20 +1,20 @@
 <template>
   <div class="attr-config">
-    <div class="attr-box">
-      <div class="attr-title">Control</div>
-      <div class="attr-item">
-        <div class="attr-control">
-          <span @click="handler('up')" class="up">
-            <i class="iconfont icon-APIshuchu"></i>上移
-          </span>
-          <span @click="handler('down')" class="down">
-            <i class="iconfont icon-APIjieru"></i>下移
-          </span>
-          <span @click="handler('del')" class="delete">
-            <i class="iconfont icon-shanchu"></i>删除
-          </span>
-        </div>
+    <div class="attr-title">Control</div>
+    <div class="attr-item">
+      <div class="attr-control">
+        <span @click="handler('up')" class="up">
+          <i class="iconfont icon-APIshuchu"></i>上移
+        </span>
+        <span @click="handler('down')" class="down">
+          <i class="iconfont icon-APIjieru"></i>下移
+        </span>
+        <span @click="handler('del')" class="delete">
+          <i class="iconfont icon-shanchu"></i>删除
+        </span>
       </div>
+    </div>
+    <div class="attr-box">
       <div class="attr-title">Attribute</div>
       <div class="attr-item" v-if="'x' in item">
         <div class="left">
@@ -48,12 +48,18 @@
           <el-input v-model="item.height"></el-input>
         </div>
       </div>
+      <rich></rich>
     </div>
   </div>
 </template>
 
 <script>
+import Rich from "@/components/Rich.vue";
+
 export default {
+  components: {
+    Rich,
+  },
   props: ["item"],
   methods: {
     handler(c) {

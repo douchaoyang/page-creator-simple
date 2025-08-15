@@ -12,7 +12,7 @@
     border-radius: 12px;
     background: #fff;
     border: 1px solid #ebebeb;
-    padding: 8px 0;
+    padding: 12px 0;
     position: absolute;
     width: 184px;
     left: 8px;
@@ -67,78 +67,107 @@
     border-radius: 12px;
     background: #fff;
     border: 1px solid #ebebeb;
-    padding: 8px 0;
+    padding: 12px 0;
     position: absolute;
     width: 234px;
     right: 8px;
     top: 8px;
     bottom: 8px;
     z-index: 10;
-    overflow-y: auto;
 
-    .attr-box {
-      padding: 0 6px;
+    #rich-container {
+      width: 100%;
+      border: 1px solid #ddd;
+    }
 
-      .attr-title {
-        font-size: 14px;
-        margin-bottom: 12px;
+    #rich-toolbar {
+      .w-e-bar {
+        justify-content: center;
+        flex-wrap: nowrap;
+        padding: 0;
+        background: #f1f1f1;
       }
 
-      .attr-item {
-        padding: 0 5px 12px;
-        margin-bottom: 12px;
-        border-bottom: 1px solid #f0f0f0;
+      .w-e-bar-item {
+        padding: 0;
+        height: auto;
+
+        button {
+          padding: 0 4px;
+        }
+      }
+    }
+
+    #rich-editor {
+      height: 160px;
+    }
+
+    .attr-config {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .attr-title {
+      font-size: 14px;
+      margin-bottom: 12px;
+      padding: 0 6px;
+    }
+
+    .attr-item {
+      padding: 0 6px 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .el-input {
+        width: 80px;
+
+        .el-input__inner {
+          height: 24px;
+          line-height: 24px;
+          border-radius: 8px;
+          text-align: center;
+          color: #ff24bd;
+        }
+      }
+
+      .left {
+        .label {
+          font-size: 14px;
+          color: #777;
+        }
+      }
+
+      .attr-control {
+        width: 100%;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: -6px;
 
-        .el-input {
-          width: 80px;
-
-          .el-input__inner {
-            height: 24px;
-            line-height: 24px;
-            border-radius: 8px;
-            text-align: center;
-            color: #ff24bd;
-          }
-        }
-
-        .left {
-          .label {
-            font-size: 14px;
-            color: #777;
-          }
-        }
-
-        .attr-control {
-          width: 100%;
+        span {
+          width: 64px;
+          height: 28px;
+          font-size: 12px;
           display: flex;
-          flex-wrap: wrap;
-          margin-top: -6px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 14px;
+          overflow: hidden;
+          background-color: #edf4ff;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          margin: 6px 6px 0 0;
 
-          span {
-            width: 64px;
-            height: 28px;
+          i {
             font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            overflow: hidden;
-            background-color: #edf4ff;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin: 6px 6px 0 0;
+            margin-right: 2px;
+          }
 
-            i {
-              font-size: 12px;
-              margin-right: 2px;
-            }
-
-            &:hover {
-              background-color: rgba(0, 45, 113, 0.125);
-            }
+          &:hover {
+            background-color: rgba(0, 45, 113, 0.125);
           }
         }
       }
