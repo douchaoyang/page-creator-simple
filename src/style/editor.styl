@@ -1,6 +1,16 @@
 @import ('@/style/reset.styl');
 @import ('@/font/aliyunit/iconfont.css');
 
+.w-e-drop-panel {
+  .w-e-panel-content-color {
+    width: 184px;
+  }
+}
+
+.w-e-menu-tooltip-v5:hover:after, .w-e-menu-tooltip-v5:hover:before {
+  z-index: 2;
+}
+
 .editor-main {
   overflow: hidden;
   width: 100vw;
@@ -77,20 +87,21 @@
 
     #rich-container {
       width: 100%;
-      border: 1px solid #ddd;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
     }
 
     #rich-toolbar {
       .w-e-bar {
         justify-content: center;
-        flex-wrap: nowrap;
-        padding: 0;
+        padding: 0 10px;
         background: #f1f1f1;
       }
 
       .w-e-bar-item {
         padding: 0;
         height: auto;
+        width: 20%;
 
         button {
           padding: 0 4px;

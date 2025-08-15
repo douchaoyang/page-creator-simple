@@ -10,7 +10,7 @@ const E = window.wangEditor;
 
 const replaceToolbarIcon = (toolbar) => {
   Promise.resolve().then(() => {
-    const menus = ["fontSize", "lineHeight"];
+    const menus = ["fontSize", "color", "lineHeight"];
     const { toolbarKeys: keys } = toolbar.getConfig();
     menus.forEach((menu) => {
       const i = keys.findIndex((e) => e === menu);
@@ -59,14 +59,15 @@ export default {
       modalAppendToBody: true,
       toolbarKeys: [
         "fontSize",
+        "bold",
+        "underline",
+        "italic",
+        "color",
+        "lineHeight",
         "justifyLeft",
         "justifyCenter",
         "justifyRight",
         "justifyJustify",
-        "bold",
-        "underline",
-        "italic",
-        "lineHeight",
       ],
     };
 
